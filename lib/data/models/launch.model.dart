@@ -5,6 +5,7 @@ class LaunchModel {
   final String patchUrl;
   final String details;
   final bool success;
+  bool favorite = false;
 
   LaunchModel({
     required this.id,
@@ -28,8 +29,11 @@ class LaunchModel {
 
   String get formattedDate {
     String month = _months[dateTime.month - 1];
-    String time = '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} UTC';
-    return '${dateTime.day} $month ${dateTime.year}, $time';
+    return '${dateTime.day} $month ${dateTime.year}';
+  }
+
+  String get formattedTime {
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} UTC';
   }
 
   static const List<String> _months = [

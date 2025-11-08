@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:spacex_app/logic/cubit/home.cubit.dart';
+import 'package:spacex_app/logic/cubit/launch.cubit.dart';
+import 'package:spacex_app/logic/cubit/view.cubit.dart';
 import 'package:spacex_app/ui/pages/home.page.dart';
 
 void main() {
@@ -17,11 +18,18 @@ class MyApp extends StatelessWidget {
       title: 'SpaceX Launches',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey),
         useMaterial3: true,
       ),
-      home: BlocProvider(
-        create: (_) => HomeCubit()..fetchLaunches(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider<LaunchCubit>(
+            create: (context) => LaunchCubit()..fetchLaunches(),
+          ),
+          BlocProvider<ViewCubit>(
+            create: (context) => ViewCubit(),
+          ),
+        ],
         child: const HomePage()
       )
     );

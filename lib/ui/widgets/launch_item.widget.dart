@@ -47,12 +47,12 @@ class LaunchItemWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        launch.formattedDate,
+                        '${launch.formattedDate}, ${launch.formattedTime}',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           )

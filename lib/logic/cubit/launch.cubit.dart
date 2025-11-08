@@ -2,23 +2,23 @@ import 'package:spacex_app/data/models/launch.model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/api/launch.service.dart';
 
-class HomeState {
+class LaunchState {
   final List<LaunchModel> launches;
   final bool isLoading;
   final bool hasError;
 
-  HomeState({
+  LaunchState({
     required this.launches,
     this.isLoading = false,
     this.hasError = false,
   });
 
-  HomeState copyWith({
+  LaunchState copyWith({
     List<LaunchModel>? launches,
     bool? isLoading,
     bool? hasError,
   }) {
-    return HomeState(
+    return LaunchState(
       launches: launches ?? this.launches,
       isLoading: isLoading ?? this.isLoading,
       hasError: hasError ?? this.hasError,
@@ -26,9 +26,9 @@ class HomeState {
   }
 }
 
-class HomeCubit extends Cubit<HomeState> {
+class LaunchCubit extends Cubit<LaunchState> {
   final _service = LaunchService.instance;
-  HomeCubit() : super(HomeState(launches: []));
+  LaunchCubit() : super(LaunchState(launches: []));
 
   Future<void> fetchLaunches() async {
     if (state.isLoading) return;
@@ -47,7 +47,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> refreshLaunches() async {
-    emit(HomeState(launches: []));
+    emit(LaunchState(launches: []));
     await fetchLaunches();
   }
 }
