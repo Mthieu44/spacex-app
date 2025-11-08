@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacex_app/logic/cubit/launch.cubit.dart';
 import 'package:spacex_app/logic/cubit/view.cubit.dart';
+import 'package:spacex_app/ui/skeletons/launch_card.skeleton.dart';
 import 'package:spacex_app/ui/skeletons/launch_item.skeleton.dart';
 import 'package:spacex_app/ui/widgets/launch_card.widget.dart';
 import 'package:spacex_app/ui/widgets/launch_item.widget.dart';
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         if (index >= launches.length) {
-          return const LaunchItemSkeleton();
+          return const LaunchCardSkeleton();
         }
         final launch = launches[index];
         return LaunchCardWidget(launch: launch);
