@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
+import 'package:spacex_app/logic/cubit/launch.cubit.dart';
 
 class LaunchItemWidget extends StatelessWidget {
   final LaunchModel launch;
@@ -14,7 +16,9 @@ class LaunchItemWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0)
         ),
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            context.read<LaunchCubit>().toggleFavorite(launch);
+          },
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Row(

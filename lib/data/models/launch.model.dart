@@ -5,7 +5,7 @@ class LaunchModel {
   final String patchUrl;
   final String details;
   final bool success;
-  bool favorite = false;
+  bool favorite;
 
   LaunchModel({
     required this.id,
@@ -14,6 +14,7 @@ class LaunchModel {
     required this.patchUrl,
     required this.details,
     required this.success,
+    this.favorite = false,
   });
 
   factory LaunchModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class LaunchModel {
       patchUrl: json['links']['patch']['large'] as String? ?? '',
       details: json['details'] as String? ?? 'No details available.',
       success: json['success'] as bool? ?? false,
+      favorite: json['favorite'] as bool? ?? false,
     );
   }
 
@@ -40,5 +42,22 @@ class LaunchModel {
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'date_utc': dateTime.toIso8601String(),
+      'links': {
+        'patch': {
+          'large': patchUrl,
+        },
+      },
+      'details': details,
+      'success': success,
+      'favorite': favorite,
+    };
+  }
+
 }
 

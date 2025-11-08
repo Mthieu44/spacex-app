@@ -1,5 +1,5 @@
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/api/launch.service.dart';
 
 class LaunchState {
@@ -24,9 +24,29 @@ class LaunchState {
       hasError: hasError ?? this.hasError,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'launches': launches.map((launch) => launch.toJson()).toList(),
+      'isLoading': isLoading,
+      'hasError': hasError,
+    };
+  }
+
+  factory LaunchState.fromJson(Map<String, dynamic> json) {
+    final launchesJson = json['launches'] as List<dynamic>? ?? [];
+    final launches = launchesJson
+        .map((launchJson) => LaunchModel.fromJson(launchJson as Map<String, dynamic>))
+        .toList();
+    return LaunchState(
+      launches: launches,
+      isLoading: json['isLoading'] as bool? ?? false,
+      hasError: json['hasError'] as bool? ?? false,
+    );
+  }
 }
 
-class LaunchCubit extends Cubit<LaunchState> {
+class LaunchCubit extends HydratedCubit<LaunchState> {
   final _service = LaunchService.instance;
   LaunchCubit() : super(LaunchState(launches: []));
 
@@ -35,8 +55,17 @@ class LaunchCubit extends Cubit<LaunchState> {
     emit(state.copyWith(isLoading: true, hasError: false));
     try {
       final launches = await _service.fetchAllLaunches();
+
+      final syncedLaunches = launches.map((launch) {
+        final existingLaunch = state.launches.firstWhere(
+          (l) => l.id == launch.id,
+          orElse: () => launch,
+        );
+        launch.favorite = existingLaunch.favorite;
+        return launch;
+      }).toList();
       emit(state.copyWith(
-        launches: launches,
+        launches: syncedLaunches
       ));
     } catch (e) {
       print('error fetching launches: $e');
@@ -49,5 +78,25 @@ class LaunchCubit extends Cubit<LaunchState> {
   Future<void> refreshLaunches() async {
     emit(LaunchState(launches: []));
     await fetchLaunches();
+  }
+
+  void toggleFavorite(LaunchModel launch) {
+    final updatedLaunches = state.launches.map((l) {
+      if (l.id == launch.id) {
+        l.favorite = !l.favorite;
+      }
+      return l;
+    }).toList();
+    emit(state.copyWith(launches: updatedLaunches));
+  }
+
+  @override
+  LaunchState? fromJson(Map<String, dynamic> json) {
+    return LaunchState.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(LaunchState state) {
+    return state.toJson();
   }
 }
