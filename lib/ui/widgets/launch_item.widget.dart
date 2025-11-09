@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
 import 'package:spacex_app/logic/cubit/launch.cubit.dart';
+import 'package:spacex_app/ui/pages/detail.page.dart';
 
 class LaunchItemWidget extends StatelessWidget {
   final LaunchModel launch;
@@ -12,30 +13,38 @@ class LaunchItemWidget extends StatelessWidget {
     return RepaintBoundary(
       child: Container(
         decoration: BoxDecoration(
-          color: launch.success ? Colors.green[100] : Colors.red[100],
+          color: launch.upcoming ? Colors.blue[100] : (launch.success ? Colors.green[100] : Colors.red[100]),
           borderRadius: BorderRadius.circular(8.0)
         ),
         child: InkWell(
           onTap: () {
-            context.read<LaunchCubit>().toggleFavorite(launch);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailPage(launch: launch)
+              )
+            );
           },
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.network(
-                  launch.patchUrl,
-                  width: 56,
-                  height: 56,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 56,
-                      height: 56,
-                      color: Colors.grey,
-                      child: Icon(Icons.image_not_supported),
-                    );
-                  }
+                Hero(
+                  tag: 'launch-patch-${launch.id}',
+                  child: Image.network(
+                    launch.links.patch,
+                    width: 56,
+                    height: 56,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 56,
+                        height: 56,
+                        color: Colors.transparent,
+                        child: Icon(Icons.image_not_supported),
+                      );
+                    }
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(

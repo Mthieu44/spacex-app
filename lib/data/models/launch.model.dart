@@ -1,19 +1,25 @@
+import 'package:spacex_app/data/models/launch_links.model.dart';
+
 class LaunchModel {
   final String id;
   final String name;
   final DateTime dateTime;
-  final String patchUrl;
+  final LaunchLinks links;
   final String details;
   final bool success;
+  final bool upcoming;
+  final List<String> failures;
   bool favorite;
 
   LaunchModel({
     required this.id,
     required this.name,
     required this.dateTime,
-    required this.patchUrl,
+    required this.links,
     required this.details,
     required this.success,
+    required this.upcoming,
+    required this.failures,
     this.favorite = false,
   });
 
@@ -22,9 +28,13 @@ class LaunchModel {
       id: json['id'] as String,
       name: json['name'] as String,
       dateTime: DateTime.parse(json['date_utc'] as String),
-      patchUrl: json['links']['patch']['large'] as String? ?? '',
+      links: LaunchLinks.fromJson(json['links'] as Map<String, dynamic>),
       details: json['details'] as String? ?? 'No details available.',
       success: json['success'] as bool? ?? false,
+      upcoming: json['upcoming'] as bool? ?? false,
+      failures: (json['failures'] as List<dynamic>?)
+              ?.map((e) => e['reason'] as String)
+              .toList() ?? [],
       favorite: json['favorite'] as bool? ?? false,
     );
   }
@@ -48,13 +58,11 @@ class LaunchModel {
       'id': id,
       'name': name,
       'date_utc': dateTime.toIso8601String(),
-      'links': {
-        'patch': {
-          'large': patchUrl,
-        },
-      },
+      'links': links.toJson(),
       'details': details,
       'success': success,
+      'upcoming': upcoming,
+      'failures': failures.map((reason) => {'reason': reason}).toList(),
       'favorite': favorite,
     };
   }
