@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
 import 'package:spacex_app/logic/cubit/launch.cubit.dart';
 import 'package:spacex_app/ui/widgets/image_carousel.widget.dart';

@@ -16,16 +16,6 @@ class LinkBubbleWidget extends StatelessWidget {
     this.color = Colors.blueAccent,
   });
 
-  Future<void> _openUrl() async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      final success = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (url.isEmpty) {
@@ -46,7 +36,7 @@ class LinkBubbleWidget extends StatelessWidget {
           );
           if (!success && context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Impossible d’ouvrir le lien')),
+              const SnackBar(content: Text('Could not launch URL.')),
             );
           }
         },

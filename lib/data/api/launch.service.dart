@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:spacex_app/data/api/rocket.service.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
-import 'package:spacex_app/data/models/rocket.model.dart';
 
 class LaunchService {
   LaunchService._();
