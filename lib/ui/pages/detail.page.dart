@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
+import 'package:spacex_app/logic/cubit/launch.cubit.dart';
+import 'package:spacex_app/ui/widgets/image_carousel.widget.dart';
 import 'package:spacex_app/ui/widgets/link_bubble.widget.dart';
 
 class DetailPage extends StatefulWidget {
   final LaunchModel launch;
-  const DetailPage({super.key, required this.launch});
+  final LaunchCubit launchCubit;
+  const DetailPage({
+    super.key,
+    required this.launch,
+    required this.launchCubit
+  });
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -23,8 +31,9 @@ class _DetailPageState extends State<DetailPage> {
   void toggleFavorite() {
     setState(() {
       isFavorite = !isFavorite;
-      widget.launch.favorite = isFavorite;
     });
+
+    widget.launchCubit.toggleFavorite(widget.launch);
   }
 
   @override
@@ -112,7 +121,6 @@ class _DetailPageState extends State<DetailPage> {
                       )
                     ],
                   ),
-                  // reasons if failure
                   if (!widget.launch.success && widget.launch.failures.isNotEmpty) ...[
                     SizedBox(height: 4),
                     Text(
@@ -124,12 +132,6 @@ class _DetailPageState extends State<DetailPage> {
                     ...widget.launch.failures.map((failure) => Text('• $failure')),
                   ],
                   SizedBox(height: 12),
-                  Text(
-                      'Links : ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold
-                      )
-                  ),
                   Row(
                     children: [
                       LinkBubbleWidget(
@@ -138,14 +140,14 @@ class _DetailPageState extends State<DetailPage> {
                         icon: Icons.article,
                         color: Colors.orange,
                       ),
-                      SizedBox(width: 4),
+                      SizedBox(width: 6),
                       LinkBubbleWidget(
                         label: 'Wikipedia',
                         url: widget.launch.links.wikipedia,
-                        icon: Icons.book,
-                        color: Colors.green,
+                        icon: Icons.language,
+                        color: Colors.blue,
                       ),
-                      SizedBox(width: 4),
+                      SizedBox(width: 6),
                       LinkBubbleWidget(
                         label: 'Webcast',
                         url: widget.launch.links.webcast,
@@ -154,8 +156,47 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
-
+                  if (widget.launch.rocket != null) ...[
+                    SizedBox(height: 24),
+                    Text(
+                      'Rocket Information :',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Name: ${widget.launch.rocket!.name}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold
+                      )
+                    ),
+                    Text('Type: ${widget.launch.rocket!.type}'),
+                    Text('Height: ${widget.launch.rocket!.height} meters'),
+                    Text('Diameter: ${widget.launch.rocket!.diameter} meters'),
+                    Text('Mass: ${widget.launch.rocket!.mass} kg'),
+                    Row(
+                      children: [
+                        Text('Active: '),
+                        Icon(
+                          widget.launch.rocket!.active ? Icons.check_circle : Icons.cancel,
+                          color: widget.launch.rocket!.active ? Colors.green : Colors.red,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text('Description: ${widget.launch.rocket!.description}'),
+                    SizedBox(height: 4),
+                    LinkBubbleWidget(
+                      label: 'Wikipedia',
+                      url: widget.launch.rocket!.wikipedia,
+                      icon: Icons.language,
+                      color: Colors.blue,
+                    ),
+                    SizedBox(height: 20),
+                    ImageCarouselWidget(images: widget.launch.rocket!.images),
+                  ]
                 ],
               ),
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
 
+import '../../logic/cubit/launch.cubit.dart';
 import '../pages/detail.page.dart';
 
 class LaunchCardWidget extends StatelessWidget {
@@ -17,10 +19,14 @@ class LaunchCardWidget extends StatelessWidget {
         ),
         child: InkWell(
           onTap: () {
+            final launchCubit = context.read<LaunchCubit>();
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailPage(launch: launch)
+                builder: (context) => DetailPage(
+                  launch: launch,
+                  launchCubit: launchCubit,
+                )
               )
             );
           },

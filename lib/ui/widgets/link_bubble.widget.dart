@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class LinkBubbleWidget extends StatelessWidget {
   final String label;
@@ -15,6 +16,16 @@ class LinkBubbleWidget extends StatelessWidget {
     this.color = Colors.blueAccent,
   });
 
+  Future<void> _openUrl() async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      final success = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (url.isEmpty) {
@@ -29,9 +40,14 @@ class LinkBubbleWidget extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          final uri = Uri.parse(url);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          final success = await launchUrlString(
+            url,
+            mode: LaunchMode.externalApplication,
+          );
+          if (!success && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Impossible d’ouvrir le lien')),
+            );
           }
         },
         borderRadius: BorderRadius.circular(16.0),

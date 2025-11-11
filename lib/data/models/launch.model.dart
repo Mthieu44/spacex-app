@@ -1,4 +1,5 @@
 import 'package:spacex_app/data/models/launch_links.model.dart';
+import 'package:spacex_app/data/models/rocket.model.dart';
 
 class LaunchModel {
   final String id;
@@ -9,6 +10,7 @@ class LaunchModel {
   final bool success;
   final bool upcoming;
   final List<String> failures;
+  RocketModel? rocket;
   bool favorite;
 
   LaunchModel({
@@ -20,6 +22,7 @@ class LaunchModel {
     required this.success,
     required this.upcoming,
     required this.failures,
+    this.rocket,
     this.favorite = false,
   });
 
@@ -66,6 +69,5 @@ class LaunchModel {
       'favorite': favorite,
     };
   }
-
 }
 
