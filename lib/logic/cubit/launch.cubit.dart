@@ -68,7 +68,6 @@ class LaunchCubit extends HydratedCubit<LaunchState> {
         launches: syncedLaunches
       ));
     } catch (e) {
-      print('error fetching launches: $e');
       emit(state.copyWith(hasError: true));
     } finally {
       emit(state.copyWith(isLoading: false));

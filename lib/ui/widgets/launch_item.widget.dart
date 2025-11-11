@@ -13,8 +13,11 @@ class LaunchItemWidget extends StatelessWidget {
     return RepaintBoundary(
       child: Container(
         decoration: BoxDecoration(
-          color: launch.upcoming ? Colors.blue[100] : (launch.success ? Colors.green[100] : Colors.red[100]),
-          borderRadius: BorderRadius.circular(8.0)
+          color: launch.upcoming ? Colors.indigo.withAlpha(54)
+              : (launch.success ? Colors.green.withAlpha(54)
+              : Colors.red.withAlpha(54) ),
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: Colors.white12, width: 0.5)
         ),
         child: InkWell(
           onTap: () {

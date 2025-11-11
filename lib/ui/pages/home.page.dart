@@ -6,6 +6,7 @@ import 'package:spacex_app/ui/skeletons/launch_card.skeleton.dart';
 import 'package:spacex_app/ui/skeletons/launch_item.skeleton.dart';
 import 'package:spacex_app/ui/widgets/launch_card.widget.dart';
 import 'package:spacex_app/ui/widgets/launch_item.widget.dart';
+import 'package:spacex_app/ui/widgets/night_sky_background.widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final ScrollController _scrollController = ScrollController();
 
   int _getItemCount(LaunchState state, List launches) {
     if (state.isLoading && state.launches.isEmpty) {
@@ -28,58 +30,62 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('SpaceX Launches'),
-        actions: [
-          BlocBuilder<ViewCubit, ViewState>(
-            builder: (context, viewState) {
-              return IconButton(
-                icon: Icon(
-                  viewState.favoritesOnly ? Icons.favorite : Icons.favorite_border,
-                  color: viewState.favoritesOnly ? Colors.red : null,
-                ),
-                onPressed: () => context.read<ViewCubit>().toggleFavorites(),
-              );
-            }
-          ),
-          BlocBuilder<ViewCubit, ViewState>(
-            builder: (context, viewState) {
-              return IconButton(
-                icon: Icon(
-                  viewState.currentView == Views.list ? Icons.grid_view : Icons.view_list
-                ),
-                onPressed: () => context.read<ViewCubit>().toggleView(),
-              );
-            }
-          ),
-        ],
+    return NightSkyBackground(
+      scrollController: _scrollController,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('SpaceX Launches'),
+          actions: [
+            BlocBuilder<ViewCubit, ViewState>(
+              builder: (context, viewState) {
+                return IconButton(
+                  icon: Icon(
+                    viewState.favoritesOnly ? Icons.favorite : Icons.favorite_border,
+                    color: viewState.favoritesOnly ? Colors.red : null,
+                  ),
+                  onPressed: () => context.read<ViewCubit>().toggleFavorites(),
+                );
+              }
+            ),
+            BlocBuilder<ViewCubit, ViewState>(
+              builder: (context, viewState) {
+                return IconButton(
+                  icon: Icon(
+                    viewState.currentView == Views.list ? Icons.grid_view : Icons.view_list
+                  ),
+                  onPressed: () => context.read<ViewCubit>().toggleView(),
+                );
+              }
+            ),
+          ],
+        ),
+
+        body: BlocBuilder<LaunchCubit, LaunchState>(
+          builder: (context, launchState) {
+            return BlocBuilder<ViewCubit, ViewState>(
+              builder: (context, viewState) {
+                final launches = viewState.favoritesOnly ?
+                  launchState.launches.where((launch) => launch.favorite).toList() :
+                  launchState.launches;
+                final itemCount = _getItemCount(launchState, launches);
+
+                return RefreshIndicator(
+                  onRefresh: () => context.read<LaunchCubit>().refreshLaunches(),
+                  child: viewState.currentView == Views.list ?
+                    _buildListView(launches, itemCount) :
+                    _buildGridView(launches, itemCount),
+                );
+              },
+            );
+          },
+        )
       ),
-
-      body: BlocBuilder<LaunchCubit, LaunchState>(
-        builder: (context, launchState) {
-          return BlocBuilder<ViewCubit, ViewState>(
-            builder: (context, viewState) {
-              final launches = viewState.favoritesOnly ?
-                launchState.launches.where((launch) => launch.favorite).toList() :
-                launchState.launches;
-              final itemCount = _getItemCount(launchState, launches);
-
-              return RefreshIndicator(
-                onRefresh: () => context.read<LaunchCubit>().refreshLaunches(),
-                child: viewState.currentView == Views.list ?
-                  _buildListView(launches, itemCount) :
-                  _buildGridView(launches, itemCount),
-              );
-            },
-          );
-        },
-      )
     );
   }
 
   Widget _buildListView(List launches, int itemCount) {
     return ListView.builder(
+      controller: _scrollController,
       itemCount: itemCount,
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
@@ -100,6 +106,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildGridView(List launches, int itemCount) {
     return GridView.builder(
+      controller: _scrollController,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.8,
