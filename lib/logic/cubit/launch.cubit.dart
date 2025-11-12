@@ -74,11 +74,6 @@ class LaunchCubit extends HydratedCubit<LaunchState> {
     }
   }
 
-  Future<void> refreshLaunches() async {
-    emit(LaunchState(launches: []));
-    await fetchLaunches();
-  }
-
   void toggleFavorite(LaunchModel launch) {
     final updatedLaunches = state.launches.map((l) {
       if (l.id == launch.id) {

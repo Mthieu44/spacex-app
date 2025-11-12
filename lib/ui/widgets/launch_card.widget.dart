@@ -14,9 +14,9 @@ class LaunchCardWidget extends StatelessWidget {
     return RepaintBoundary(
       child: Container(
           decoration: BoxDecoration(
-              color: launch.upcoming ? Colors.indigo.withAlpha(54)
-                  : (launch.success ? Colors.green.withAlpha(54)
-                  : Colors.red.withAlpha(54) ),
+              color: launch.upcoming ? Colors.indigo.withAlpha(40)
+                  : (launch.success ? Colors.green.withAlpha(40)
+                  : Colors.red.withAlpha(40) ),
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(color: Colors.white12, width: 0.5)
           ),

@@ -21,8 +21,6 @@ class _HomePageState extends State<HomePage> {
   int _getItemCount(LaunchState state, List launches) {
     if (state.isLoading && state.launches.isEmpty) {
       return 20;
-    } else if (state.isLoading) {
-      return launches.length + 1;
     } else {
       return launches.length;
     }
@@ -70,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                 final itemCount = _getItemCount(launchState, launches);
 
                 return RefreshIndicator(
-                  onRefresh: () => context.read<LaunchCubit>().refreshLaunches(),
+                  onRefresh: () => context.read<LaunchCubit>().fetchLaunches(),
                   child: viewState.currentView == Views.list ?
                     _buildListView(launches, itemCount) :
                     _buildGridView(launches, itemCount),

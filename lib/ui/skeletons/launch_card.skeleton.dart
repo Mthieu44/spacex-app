@@ -8,12 +8,13 @@ class LaunchCardSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(8.0)
+        color: Colors.grey.shade900,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.white12, width: 0.5)
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade300,
+        baseColor: Colors.grey.shade800,
+        highlightColor: Colors.grey.shade700,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 2),
           child: Column(
@@ -27,7 +28,7 @@ class LaunchCardSkeleton extends StatelessWidget {
                   shape: BoxShape.circle,
                 )
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Container(
                 width: double.infinity,
                 height: 16,
@@ -36,7 +37,7 @@ class LaunchCardSkeleton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(64.0),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 10),
               Container(
                 width: 100,
                 height: 14,
@@ -45,7 +46,7 @@ class LaunchCardSkeleton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(64.0),
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               Container(
                 width: 80,
                 height: 14,

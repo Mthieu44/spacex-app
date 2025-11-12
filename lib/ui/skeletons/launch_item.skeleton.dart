@@ -8,12 +8,13 @@ class LaunchItemSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(8.0)
+        color: Colors.grey.shade900,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.white12, width: 0.5)
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade300,
+        baseColor: Colors.grey.shade800,
+        highlightColor: Colors.grey.shade700,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -33,16 +34,16 @@ class LaunchItemSkeleton extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: double.infinity,
+                      width: 120,
                       height: 16,
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         borderRadius: BorderRadius.circular(64.0),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 10),
                     Container(
-                      width: 150,
+                      width: 200,
                       height: 14,
                       decoration: BoxDecoration(
                         color: Colors.grey,

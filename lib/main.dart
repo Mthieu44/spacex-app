@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:spacex_app/logic/cubit/launch.cubit.dart';
 import 'package:spacex_app/logic/cubit/view.cubit.dart';
 import 'package:spacex_app/ui/pages/home.page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,9 +37,12 @@ class MyApp extends StatelessWidget {
           elevation: 0,
           scrolledUnderElevation: 0,
         ),
-        textTheme: ThemeData.dark().textTheme.apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
+        textTheme: GoogleFonts.shareTechTextTheme(
+          ThemeData.dark().textTheme
+        ).copyWith(
+          bodyMedium: GoogleFonts.shareTech(fontSize: 16),
+          bodyLarge: GoogleFonts.shareTech(fontSize: 18),
+          bodySmall: GoogleFonts.shareTech(fontSize: 14),
         )
       ),
       home: MultiBlocProvider(

@@ -26,7 +26,7 @@ class _NightSkyBackgroundState extends State<NightSkyBackground> with SingleTick
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
+    )..repeat();
   }
 
   @override
@@ -42,14 +42,14 @@ class _NightSkyBackgroundState extends State<NightSkyBackground> with SingleTick
     _stars ??= _generateStars(
         Size(
           MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height + 2000,
+          MediaQuery.of(context).size.height * 3,
         )
       );
   }
 
   List<Star> _generateStars(Size size)  {
     final List<Star> stars = [];
-    final random = Random(42);
+    final random = Random();
     final width = size.width;
     final height = size.height;
     final segments = (height / _segmentHeight).ceil() + 2;
@@ -141,7 +141,7 @@ class _NightSkyPainter extends CustomPainter {
       final flicker = 0.5 + 0.5 * sin(2 * pi * animationValue + star.flickerOffset);
       paintStar.color = Colors.white.withAlpha((150 + (105 * flicker)).toInt());
 
-      final parallaxFactor = 0.05 + (1 - star.depth) * 0.15;
+      final parallaxFactor = star.depth * 0.2;
       final adjustedY = star.position.dy - scrollOffset * parallaxFactor;
       if (adjustedY > size.height || adjustedY < 0) continue;
       canvas.drawCircle(Offset(star.position.dx, adjustedY), star.size, paintStar);
