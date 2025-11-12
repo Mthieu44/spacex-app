@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           elevation: 0,
+          scrolledUnderElevation: 0,
         ),
         textTheme: ThemeData.dark().textTheme.apply(
           bodyColor: Colors.white,

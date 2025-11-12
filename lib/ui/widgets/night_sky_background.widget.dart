@@ -16,13 +16,16 @@ class NightSkyBackground extends StatefulWidget {
 
 class _NightSkyBackgroundState extends State<NightSkyBackground> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
+  final double _segmentHeight = 300;
+  final int _starsPerSegment = 150;
+  List<Star>? _stars;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 1),
     )..repeat(reverse: true);
   }
 
@@ -33,25 +36,58 @@ class _NightSkyBackgroundState extends State<NightSkyBackground> with SingleTick
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _stars ??= _generateStars(
+        Size(
+          MediaQuery.of(context).size.width,
+          MediaQuery.of(context).size.height + 2000,
+        )
+      );
+  }
+
+  List<Star> _generateStars(Size size)  {
+    final List<Star> stars = [];
+    final random = Random(42);
+    final width = size.width;
+    final height = size.height;
+    final segments = (height / _segmentHeight).ceil() + 2;
+
+    for (int i = 0; i < segments; i++) {
+      final segmentTop = i * _segmentHeight;
+      for (int j = 0; j < _starsPerSegment; j++) {
+        final x = random.nextDouble() * width;
+        final y = random.nextDouble() * _segmentHeight + segmentTop;
+        final size = random.nextDouble() * 1.2 + 0.3;
+        final flickerOffset = random.nextDouble() * 2 * pi;
+        final depth = random.nextDouble();
+        stars.add(Star(Offset(x, y), size, flickerOffset, depth));
+      }
+    }
+    return stars;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_stars == null) {
+      return SizedBox.shrink();
+    }
+
     return AnimatedBuilder(
       animation: Listenable.merge([widget.scrollController, _animationController]),
       builder: (context, child) {
-        final offset =
-          widget.scrollController.hasClients ? widget.scrollController.offset * 0.1 : 0.0;
-        final maxScroll = widget.scrollController.hasClients
-            ? widget.scrollController.position.maxScrollExtent
-            : 0.0;
+        final hasClients = widget.scrollController.hasClients;
 
         return Stack(
           children: [
-            Positioned(
-              top: -offset,
-              left: 0,
-              right: 0,
-              height: MediaQuery.of(context).size.height + maxScroll,
+            Positioned.fill(
               child: CustomPaint(
-                painter: _NightSkyPainter(animationValue: _animationController.value)
+                painter: _NightSkyPainter(
+                  stars: _stars!,
+                  animationValue: _animationController.value,
+                  scrollOffset: hasClients ? widget.scrollController.offset : 0.1
+                )
               ),
             ),
             widget.child,
@@ -65,35 +101,27 @@ class _NightSkyBackgroundState extends State<NightSkyBackground> with SingleTick
 class Star {
   final Offset position;
   final double size;
+  final double flickerOffset;
+  final double depth;
 
-  Star(this.position, this.size);
+  Star(
+    this.position,
+    this.size,
+    this.flickerOffset,
+    this.depth
+  );
 }
 
 class _NightSkyPainter extends CustomPainter {
-  final double _segmentHeight = 300;
-  final int _starsPerSegment = 30;
   final double animationValue;
-  _NightSkyPainter({this.animationValue = 0.0});
+  final List<Star> stars;
+  final double scrollOffset;
 
-  List<Star> _generateStars(Size size) {
-    final List<Star> stars = [];
-    final random = Random(42);
-    final width = size.width;
-    final height = size.height;
-    final segments = (height / _segmentHeight).ceil() + 2;
-
-    for (int i = 0; i < segments; i++) {
-      final segmentTop = i * _segmentHeight;
-      for (int j = 0; j < _starsPerSegment; j++) {
-        final x = random.nextDouble() * width;
-        final y = random.nextDouble() * _segmentHeight + segmentTop;
-        final size = random.nextDouble() * 1.2 + 0.3;
-        stars.add(Star(Offset(x, y), size));
-      }
-    }
-    return stars;
-  }
-
+  _NightSkyPainter({
+    required this.stars,
+    this.animationValue = 0.0,
+    this.scrollOffset = 0.1,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -109,15 +137,21 @@ class _NightSkyPainter extends CustomPainter {
 
     // Dessin des étoiles
     final paintStar = Paint();
-    final stars = _generateStars(size);
     for (var star in stars) {
-      final flicker = (sin((animationValue * 2 * pi) + star.position.dx) + 1) / 2;
-      paintStar.color = Colors.white.withOpacity(0.5 + 0.5 * flicker);
-      if (star.position.dy > size.height) continue;
-      canvas.drawCircle(star.position, star.size, paintStar);
+      final flicker = 0.5 + 0.5 * sin(2 * pi * animationValue + star.flickerOffset);
+      paintStar.color = Colors.white.withAlpha((150 + (105 * flicker)).toInt());
+
+      final parallaxFactor = 0.05 + (1 - star.depth) * 0.15;
+      final adjustedY = star.position.dy - scrollOffset * parallaxFactor;
+      if (adjustedY > size.height || adjustedY < 0) continue;
+      canvas.drawCircle(Offset(star.position.dx, adjustedY), star.size, paintStar);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _NightSkyPainter oldDelegate) {
+    return oldDelegate.animationValue != animationValue ||
+        oldDelegate.stars != stars ||
+        oldDelegate.scrollOffset != scrollOffset;
+  }
 }
