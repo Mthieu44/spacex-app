@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spacex_app/data/models/launch.model.dart';
+import 'package:spacex_app/logic/cubit/onboarding.cubit.dart';
 import '../../logic/cubit/launch.cubit.dart';
 import '../pages/detail.page.dart';
 
@@ -24,13 +25,19 @@ class LaunchItemWidget extends StatelessWidget {
           child: InkWell(
             onTap: () {
               final launchCubit = context.read<LaunchCubit>();
+              final onboardingCubit = context.read<OnboardingCubit>();
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailPage(
-                    launch: launch,
-                    launchCubit: launchCubit,
-                  )
+                  builder: (context) {
+                    return BlocProvider.value(
+                      value: onboardingCubit,
+                      child: DetailPage(
+                        launch: launch,
+                        launchCubit: launchCubit,
+                      ),
+                    );
+                  }
                 )
               );
             },

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:spacex_app/logic/cubit/launch.cubit.dart';
+import 'package:spacex_app/logic/cubit/onboarding.cubit.dart';
 import 'package:spacex_app/logic/cubit/view.cubit.dart';
 import 'package:spacex_app/ui/pages/home.page.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -53,6 +54,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<ViewCubit>(
             create: (context) => ViewCubit(),
           ),
+          BlocProvider<OnboardingCubit>(
+            create: (context) => OnboardingCubit()..load(),
+          )
         ],
         child: const HomePage()
       )
