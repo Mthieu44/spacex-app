@@ -41,43 +41,50 @@ class LaunchCardWidget extends StatelessWidget {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 2),
+            padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Hero(
                   tag: 'launch-patch-${launch.id}',
                   child: Image.network(
                     launch.links.patch,
-                    width: 96,
-                    height: 96,
+                    width: 92,
+                    height: 92,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        width: 96,
-                        height: 96,
+                        width: 92,
+                        height: 92,
                         color: Colors.transparent,
                         child: Icon(Icons.image_not_supported),
                       );
                     }
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   launch.name,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   )
                 ),
                 const SizedBox(height: 4),
                 Text(
                   launch.formattedDate,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
                 ),
                 Text(
                   launch.formattedTime,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
                 ),
               ],
             )
