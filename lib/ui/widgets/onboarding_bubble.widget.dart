@@ -96,15 +96,38 @@ class _OnboardingBubbleWidgetState extends State<OnboardingBubbleWidget> with Ti
                         final progress = _typewriterController.value;
                         final charCount = (progress * fullText.length).clamp(0, fullText.length).toInt();
                         final displayedText = fullText.substring(0, charCount);
+                        late double cursorOpacity;
+                        if (progress < 1.0) {
+                          cursorOpacity = 1.0;
+                        } else if (_animationController.value <= 0.25 || (_animationController.value > 0.5 && _animationController.value <= 0.75)) {
+                          cursorOpacity = 1.0;
+                        } else {
+                          cursorOpacity = 0.0;
+                        }
 
-                        return Text(
-                          displayedText,
-                          style: GoogleFonts.spaceMono(
-                            color: Colors.white,
-                            fontSize: 15,
-                            decoration: TextDecoration.none,
-                          ),
+                        return RichText(
                           textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: GoogleFonts.spaceMono(
+                              color: Colors.white,
+                              fontSize: 15,
+                              decoration: TextDecoration.none,
+                            ),
+                            children: [
+                              TextSpan(text: displayedText),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Opacity(
+                                  opacity: cursorOpacity,
+                                  child: Container(
+                                    width: 9,
+                                    height: 18,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              )
+                            ]
+                          )
                         );
                       }
                     )
