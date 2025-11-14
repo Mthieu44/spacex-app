@@ -9,7 +9,6 @@ import 'package:spacex_app/ui/widgets/launch_card.widget.dart';
 import 'package:spacex_app/ui/widgets/launch_item.widget.dart';
 import 'package:spacex_app/ui/widgets/night_sky_background.widget.dart';
 import 'package:spacex_app/ui/widgets/onboarding.widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

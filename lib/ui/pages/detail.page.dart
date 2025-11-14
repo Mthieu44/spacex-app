@@ -153,7 +153,9 @@ class _DetailPageState extends State<DetailPage> {
                           ...widget.launch.failures.map((failure) => Text('• $failure')),
                         ],
                         SizedBox(height: 12),
-                        Row(
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
                           children: [
                             LinkBubbleWidget(
                               label: 'Article',
@@ -161,14 +163,12 @@ class _DetailPageState extends State<DetailPage> {
                               icon: Icons.article,
                               color: Colors.orange,
                             ),
-                            SizedBox(width: 6),
                             LinkBubbleWidget(
                               label: 'Wikipedia',
                               url: widget.launch.links.wikipedia,
                               icon: Icons.language,
                               color: Colors.blue,
                             ),
-                            SizedBox(width: 6),
                             LinkBubbleWidget(
                               label: 'Webcast',
                               url: widget.launch.links.webcast,
@@ -177,8 +177,8 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                           ],
                         ),
+                        Divider(height: 32, thickness: 2),
                         if (widget.launch.rocket != null) ...[
-                          SizedBox(height: 24),
                           Text(
                             'Rocket Information :',
                             style: TextStyle(
