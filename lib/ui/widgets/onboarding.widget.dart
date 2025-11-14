@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:spacex_app/logic/cubit/onboarding.cubit.dart';
 import 'package:spacex_app/ui/widgets/onboarding_bubble.widget.dart';
@@ -47,6 +49,12 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
       ),
       FeatureStep(
         key: null,
+        text: 'You can scroll through the list to see all launches.',
+        bubbleRect: Rect.fromLTWH(0, 0, 250, 150),
+        backgroundAlpha: 150
+      ),
+      FeatureStep(
+        key: null,
         text: 'Now try clicking on a launch to see more details!',
         bubbleRect: Rect.fromLTWH(0, 0, 250, 150),
         backgroundAlpha: 150
@@ -56,7 +64,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
       steps = [
         FeatureStep(
           key: null,
-          text: 'This is the launch detail page where you can find more information about the selected launch.',
+          text: 'On this page, you can find more information about the selected launch.',
           bubbleRect: Rect.fromLTWH(0, 0, 250, 150),
           backgroundAlpha: 150
         ),
@@ -70,7 +78,8 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
           key: widget.globalKeys['backButtonKey'],
           text: 'Use this button to go back to the launches list.',
           bubbleRect: Rect.fromLTWH(-40, -190, 230, 120),
-          backgroundAlpha: 50
+          backgroundAlpha: 50,
+          targetArrowAlignment: Alignment.bottomRight
         ),
         FeatureStep(
           key: null,
@@ -99,6 +108,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
               color: Colors.black.withAlpha(currentStep.backgroundAlpha),
             ),
             OnboardingBubbleWidget(
+              key: ValueKey(widget.currentStepIndex),
               text: currentStep.text,
               rect: Rect.fromLTWH(
                 left,
@@ -106,6 +116,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
                 currentStep.bubbleRect.width,
                 currentStep.bubbleRect.height
               ),
+              currentStep: widget.currentStepIndex + 1,
             ),
             if (currentStep.key != null)
               CustomPaint(
@@ -115,9 +126,10 @@ class _OnboardingWidgetState extends State<OnboardingWidget> {
                     left,
                     top,
                     currentStep.bubbleRect.width,
-                    currentStep.bubbleRect.height
+                    currentStep.bubbleRect.height,
                   ),
-                  targetRect: _getWidgetRect(currentStep.key!)
+                  targetRect: _getWidgetRect(currentStep.key!),
+                  targetArrowAlignment: currentStep.targetArrowAlignment
                 ),
               ),
           ],
@@ -132,12 +144,14 @@ class FeatureStep {
   final String text;
   final Rect bubbleRect;
   final int backgroundAlpha;
+  final Alignment targetArrowAlignment;
 
   FeatureStep({
     required this.key,
     required this.text,
     required this.bubbleRect,
-    required this.backgroundAlpha
+    required this.backgroundAlpha,
+    this.targetArrowAlignment = Alignment.bottomLeft
   });
 }
 
@@ -151,7 +165,12 @@ Rect _getWidgetRect(GlobalKey key) {
 class ArrowPainter extends CustomPainter {
   final Rect bubbleRect;
   final Rect targetRect;
-  ArrowPainter({required this.bubbleRect, required this.targetRect});
+  final Alignment targetArrowAlignment;
+  ArrowPainter({
+    required this.bubbleRect,
+    required this.targetRect,
+    required this.targetArrowAlignment
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -160,21 +179,33 @@ class ArrowPainter extends CustomPainter {
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 
-    final path = Path();
-    final startX = bubbleRect.left + bubbleRect.width * 0.8;
+    final startX = bubbleRect.left + bubbleRect.width * 0.5;
     final startY = bubbleRect.top;
-    final endX = targetRect.left + targetRect.width / 2;
-    final endY = targetRect.bottom + 8.0;
+    final endX = targetArrowAlignment == Alignment.bottomRight
+        ? targetRect.right
+        : targetRect.left;
+    final endY = targetRect.bottom;
 
-    path.moveTo(startX, startY);
-    path.lineTo(endX, endY);
-
-    // Draw arrowhead
+    final angle = atan2(endY - startY, endX - startX);
     const arrowSize = 6.0;
-    path.moveTo(endX, endY);
-    path.lineTo(endX - arrowSize, endY + arrowSize);
-    path.moveTo(endX, endY);
-    path.lineTo(endX + arrowSize, endY + arrowSize);
+    const arrowAngle = pi / 6;
+
+    final arrowPoint1 = Offset(
+      endX - arrowSize * cos(angle - arrowAngle),
+      endY - arrowSize * sin(angle - arrowAngle),
+    );
+    final arrowPoint2 = Offset(
+      endX - arrowSize * cos(angle + arrowAngle),
+      endY - arrowSize * sin(angle + arrowAngle),
+    );
+
+    final path = Path()
+      ..moveTo(startX, startY)
+      ..lineTo(endX, endY)
+      ..moveTo(endX, endY)
+      ..lineTo(arrowPoint1.dx, arrowPoint1.dy)
+      ..moveTo(endX, endY)
+      ..lineTo(arrowPoint2.dx, arrowPoint2.dy);
     canvas.drawPath(path, paint);
   }
   @override

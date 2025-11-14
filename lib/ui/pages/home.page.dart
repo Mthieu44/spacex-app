@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 type: OnboardingType.home,
                 currentStepIndex: onboardingState.currentStep,
-                onNextStep: () => context.read<OnboardingCubit>().nextStep(4)
+                onNextStep: () => context.read<OnboardingCubit>().nextStep(5)
               );
             },
           )
