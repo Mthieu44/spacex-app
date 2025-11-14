@@ -26,6 +26,11 @@ class OnboardingState {
       currentStep: currentStep ?? this.currentStep,
     );
   }
+
+  @override
+  String toString() {
+    return 'OnboardingState(type: $type, completed: $completed, currentStep: $currentStep)';
+  }
 }
 
 class OnboardingCubit extends Cubit<OnboardingState> {
@@ -33,8 +38,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       : super(OnboardingState(
           type: OnboardingType.home,
           completed: {
-            OnboardingType.home: false,
-            OnboardingType.detail: false,
+            OnboardingType.home: true,
+            OnboardingType.detail: true,
           },
           currentStep: 0,
         ));
